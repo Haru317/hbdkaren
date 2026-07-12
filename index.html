@@ -1,78 +1,211 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>Karen & Theo: High-End Layered Animation</title>
-    <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-        
-        /* 🎨 シーン全体のコンテナ */
-        #scene-container {
-            position: relative; width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-        }
+{
+  "meta": {
+    "project": "Karen & Theo: Our Wonderful Days",
+    "version": "1.0",
+    "referenceViewport": { "width": 390, "height": 844, "unit": "css_px" },
+    "exportScale": 3,
+    "colorSpace": "sRGB",
+    "notes": "All character sprites face RIGHT only. Left-facing is done at runtime via CSS transform: scaleX(-1). Confetti PNGs are used only in the scene 9 finale; no other scene uses confetti."
+  },
 
-        /* 🌏 レイヤー1：背景 (scene1_bg.png) */
-        #background {
-            position: absolute; width: 100%; height: 100%;
-            background: url('./scene1_bg.png') no-repeat center center;
-            background-size: cover;
-            z-index: 1;
-            /* 背景もゆっくり動かして「息づかい」を出す */
-            animation: bg-breathe 10s infinite alternate ease-in-out;
-        }
-
-        /* 👤 レイヤー2：Karen (scene1_karen.png) */
-        #karen {
-            position: absolute; bottom: 15%; left: 40%;
-            width: 300px; height: auto; z-index: 10;
-            animation: char-float 3s infinite alternate ease-in-out;
-        }
-
-        /* 👦 レイヤー3：Theo (scene1_theo.png) */
-        #theo {
-            position: absolute; bottom: 10%; left: 55%;
-            width: 220px; height: auto; z-index: 11;
-            animation: char-float 2.5s infinite alternate-reverse ease-in-out;
-        }
-
-        @keyframes bg-breathe {
-            from { transform: scale(1.0); }
-            to { transform: scale(1.05); }
-        }
-
-        @keyframes char-float {
-            from { transform: translateY(0) rotate(-1deg); }
-            to { transform: translateY(-15px) rotate(1deg); }
-        }
-
-        /* UI */
-        #ui { position: absolute; bottom: 40px; width: 100%; text-align: center; z-index: 100; }
-        button {
-            padding: 15px 40px; font-size: 20px; font-weight: bold;
-            background: white; border: none; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-    </style>
-</head>
-<body>
-
-<div id="scene-container">
-    <div id="background"></div>
-    <img src="./scene1_karen.png" id="karen" alt="Karen">
-    <img src="./scene1_theo.png" id="theo" alt="Theo">
-</div>
-
-<div id="ui">
-    <button onclick="nextScene()">Go to Next Scene</button>
-</div>
-
-<script>
-    function nextScene() {
-        // ここでシーン2の画像に差し替える処理を書く
-        alert("画像を保存してリポジトリに入れたら、次のシーンのプロンプトをお出しします！");
+  "characters": {
+    "karen": {
+      "frameSize1x": { "width": 120, "height": 200 },
+      "frames": 4,
+      "anchor": { "x": 0.5, "y": 1.0 },
+      "costumes": {
+        "work":      { "file": "assets/characters/karen_work_walk.png",      "usedInScenes": [1, 2] },
+        "blueTweed": { "file": "assets/characters/karen_blueTweed_walk.png", "usedInScenes": [3, 5] },
+        "pinkTweed": { "file": "assets/characters/karen_pinkTweed_walk.png", "usedInScenes": [4, 9] },
+        "casual":    { "file": "assets/characters/karen_casual_walk.png",    "usedInScenes": [6, 7, 8] }
+      }
+    },
+    "theo": {
+      "frameSize1x": { "width": 90, "height": 150 },
+      "frames": 4,
+      "anchor": { "x": 0.5, "y": 1.0 },
+      "costumes": {
+        "school": { "file": "assets/characters/theo_school_walk.png", "usedInScenes": [1, 3, 5], "animationType": "walk" },
+        "travel": { "file": "assets/characters/theo_travel_walk.png", "usedInScenes": [6, 8, 9], "animationType": "walk" },
+        "swim":   { "file": "assets/characters/theo_swim_float.png",  "usedInScenes": [7],       "animationType": "float" }
+      }
     }
-</script>
+  },
 
-</body>
-</html>
+  "parallax": {
+    "layerOrder": ["L1_sky", "L2_mid", "L3_near", "CHARACTERS", "L4_fg"],
+    "defaultSpeedFactor": {
+      "L1_sky": 0.05,
+      "L2_mid": 0.20,
+      "L3_near": 0.45,
+      "L4_fg": 0.80
+    },
+    "sizes1x": {
+      "L1_sky": { "width": 1350, "height": 2600, "opaque": true },
+      "L2_mid": { "width": 1620, "height": 2600, "opaque": false },
+      "L3_near": { "width": 1620, "height": 2600, "opaque": false },
+      "L4_fg": { "width": 1620, "height": 2600, "opaque": false }
+    },
+    "loopElements": {
+      "loop_clouds": { "size1x": { "width": 800, "height": 300 }, "mode": "scrollX", "periodSec": [40, 60], "seamless": true },
+      "loop_water":  { "size1x": { "width": 780, "height": 260 }, "mode": "scrollX", "periodSec": [15, 25], "seamless": true },
+      "loop_light":  { "size1x": { "width": 600, "height": 900 }, "mode": "fadePulse", "periodSec": [4, 6], "seamless": false },
+      "loop_plants": { "size1x": { "width": 500, "height": 700 }, "mode": "swayX", "periodSec": [3, 5], "seamless": false }
+    }
+  },
+
+  "scenes": [
+    {
+      "id": 1, "title": "School Run", "time": "7:30 AM",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene1/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene1/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene1/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_clouds"],
+      "characters": {
+        "karen": { "costume": "work", "anchor": { "x": 0.62, "y": 0.86 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "costume": "school", "present": true, "anchor": { "x": 0.40, "y": 0.90 }, "scale": 0.85, "facing": "left" }
+      },
+      "dialogue": { "karen": "Let's go!", "theo": "Love you mom!" }
+    },
+    {
+      "id": 2, "title": "Office Mode", "time": "8:30 AM",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene2/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene2/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene2/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_light"],
+      "characters": {
+        "karen": { "costume": "work", "anchor": { "x": 0.50, "y": 0.88 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "present": false }
+      },
+      "dialogue": { "karen": "Lawyer mama mode: ON", "theo": null }
+    },
+    {
+      "id": 3, "title": "English Pickup", "time": "4:00 PM",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene3/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene3/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene3/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_clouds", "loop_plants"],
+      "characters": {
+        "karen": { "costume": "blueTweed", "anchor": { "x": 0.58, "y": 0.86 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "costume": "school", "present": true, "anchor": { "x": 0.36, "y": 0.90 }, "scale": 0.85, "facing": "left" }
+      },
+      "dialogue": { "karen": "Have fun!", "theo": "See you soon mom!" }
+    },
+    {
+      "id": 4, "title": "Café Work Time", "time": "4:15 PM",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene4/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene4/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene4/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_light"],
+      "characters": {
+        "karen": { "costume": "pinkTweed", "anchor": { "x": 0.50, "y": 0.88 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "present": false }
+      },
+      "dialogue": { "karen": "Focus focus… but first coffee", "theo": null }
+    },
+    {
+      "id": 5, "title": "Ramen Night", "time": "6:30 PM",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene5/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene5/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene5/L3_near.png",
+        "L4_fg": "assets/backgrounds/scene5/L4_fg.png"
+      },
+      "loops": ["loop_light"],
+      "characters": {
+        "karen": { "costume": "blueTweed", "anchor": { "x": 0.40, "y": 0.86 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "costume": "school", "present": true, "anchor": { "x": 0.62, "y": 0.90 }, "scale": 0.85, "facing": "left" }
+      },
+      "dialogue": { "karen": "Best ramen team", "theo": "Best ramen team!" }
+    },
+    {
+      "id": 6, "title": "Airplane to Jeju", "time": "Next day",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene6/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene6/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene6/L3_near.png",
+        "L4_fg": "assets/backgrounds/scene6/L4_fg.png"
+      },
+      "loops": ["loop_clouds"],
+      "characters": {
+        "karen": { "costume": "casual", "anchor": { "x": 0.40, "y": 0.84 }, "scale": 0.95, "facing": "right" },
+        "theo":  { "costume": "travel", "present": true, "anchor": { "x": 0.62, "y": 0.88 }, "scale": 0.80, "facing": "left" }
+      },
+      "dialogue": { "karen": "Woohoo! Adventure time", "theo": "Woohoo!" }
+    },
+    {
+      "id": 7, "title": "Pool Day", "time": "Jeju",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene7/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene7/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene7/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_water", "loop_light"],
+      "characters": {
+        "karen": { "costume": "casual", "anchor": { "x": 0.62, "y": 0.82 }, "scale": 0.95, "facing": "right" },
+        "theo":  { "costume": "swim", "present": true, "anchor": { "x": 0.38, "y": 0.90 }, "scale": 0.85, "facing": "left" }
+      },
+      "dialogue": { "karen": "Say cheese!", "theo": "Ice cream time!" }
+    },
+    {
+      "id": 8, "title": "Horseback Riding", "time": "Jeju",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene8/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene8/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene8/L3_near.png",
+        "L4_fg": null
+      },
+      "loops": ["loop_plants"],
+      "characters": {
+        "karen": { "costume": "casual", "anchor": { "x": 0.36, "y": 0.84 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "costume": "travel", "present": true, "anchor": { "x": 0.64, "y": 0.88 }, "scale": 0.80, "facing": "left" }
+      },
+      "dialogue": { "karen": "Giddy up!", "theo": "So fun!" }
+    },
+    {
+      "id": 9, "title": "Birthday Finale", "time": "Back home",
+      "background": {
+        "L1_sky": "assets/backgrounds/scene9/L1_sky.png",
+        "L2_mid": "assets/backgrounds/scene9/L2_mid.png",
+        "L3_near": "assets/backgrounds/scene9/L3_near.png",
+        "L4_fg": "assets/backgrounds/scene9/L4_fg.png"
+      },
+      "loops": ["loop_light"],
+      "characters": {
+        "karen": { "costume": "pinkTweed", "anchor": { "x": 0.42, "y": 0.86 }, "scale": 1.0, "facing": "right" },
+        "theo":  { "costume": "travel", "present": true, "anchor": { "x": 0.60, "y": 0.88 }, "scale": 0.85, "facing": "left" }
+      },
+      "dialogue": { "karen": null, "theo": "You are the best mom!" },
+      "finale": true
+    }
+  ],
+
+  "confetti": {
+    "usage": "finale_only",
+    "scene": 9,
+    "files": [
+      "assets/fx/confetti/confetti_01.png",
+      "assets/fx/confetti/confetti_02.png",
+      "assets/fx/confetti/confetti_03.png",
+      "assets/fx/confetti/confetti_04.png",
+      "assets/fx/confetti/confetti_05.png",
+      "assets/fx/confetti/confetti_06.png"
+    ],
+    "size1x": { "width": 120, "height": 160 },
+    "particleCount": 26,
+    "note": "Do not reuse confetti assets or code-drawn confetti divs in any other scene."
+  }
+}
