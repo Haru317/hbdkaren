@@ -2,179 +2,76 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Karen & Theo: Living Adventure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Karen & Theo: High-End Layered Animation</title>
     <style>
-        :root {
-            /* ローカルファイルを参照 */
-            --char-sheet: url('./char_sheet.png'); 
-            --bg-map: url('./map_bg.png'); 
-        }
-
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #fdf6e9; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        /* 🌏 背景マップ：キャラの動きに合わせてカメラが追従 */
-        #stage {
-            position: absolute; width: 100vw; height: 100vh;
-            background-image: var(--bg-map);
-            background-size: 250% auto; /* ズームして細部を見せる */
-            background-repeat: no-repeat;
-            background-position: center;
-            transition: background-position 1.5s cubic-bezier(0.45, 0, 0.55, 1);
-            z-index: 1;
-        }
-
-        /* 👤 キャラクター本体 */
-        .character {
-            position: absolute;
-            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform: translate(-50%, -100%);
-            z-index: 10;
-            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.2));
-            pointer-events: none;
-        }
-
-        .sprite {
-            background-image: var(--char-sheet);
-            background-repeat: no-repeat;
-            background-size: 1200px auto; /* 画像の横幅を固定して座標を安定させる */
-            width: 140px; height: 260px;
-            transition: background-position 0.3s steps(1);
-        }
-
-        #theo .sprite { width: 120px; height: 220px; }
-
-        /* 📍 衣装切り出し座標（デザイン画の並びに合わせて調整） */
-        .k-work    { background-position: -15px -135px; }
-        .k-office1 { background-position: -290px -135px; }
-        .k-office2 { background-position: -560px -135px; }
-        .k-holiday { background-position: -830px -135px; }
-
-        .t-school  { background-position: -15px -680px; }
-        .t-travel  { background-position: -365px -680px; }
-        .t-swim    { background-position: -700px -680px; }
-
-        /* 🏃 わちゃわちゃ歩行アニメ */
-        .walking .sprite {
-            animation: walk-bounce 0.3s infinite alternate ease-in-out;
-        }
-
-        @keyframes walk-bounce {
-            0% { transform: scale(1.05, 0.95) translateY(0); }
-            100% { transform: scale(0.95, 1.05) translateY(-30px); }
-        }
-
-        /* 💬 吹き出し */
-        .speech {
-            position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-            background: white; border: 3px solid #333; padding: 10px 20px; border-radius: 30px;
-            font-size: 16px; font-weight: bold; white-space: nowrap;
-            opacity: 0; transition: 0.5s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .active .speech { opacity: 1; transform: translateX(-50%) translateY(-10px); }
-
-        /* 🎮 操作UI */
-        #ui {
-            position: absolute; bottom: 30px; width: 100%; text-align: center; z-index: 100;
-        }
-        #next-btn {
-            background: #ff6b6b; border: none; padding: 20px 80px; font-size: 24px; color: white;
-            font-weight: 900; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 8px 0 #d64545; transition: 0.2s;
-        }
-        #next-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #d64545; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
         
-        #scene-title {
-            color: #333; background: rgba(255,255,255,0.8); display: inline-block;
-            padding: 5px 20px; border-radius: 10px; margin-bottom: 15px; font-weight: bold;
+        /* 🎨 シーン全体のコンテナ */
+        #scene-container {
+            position: relative; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* 🌏 レイヤー1：背景 (scene1_bg.png) */
+        #background {
+            position: absolute; width: 100%; height: 100%;
+            background: url('./scene1_bg.png') no-repeat center center;
+            background-size: cover;
+            z-index: 1;
+            /* 背景もゆっくり動かして「息づかい」を出す */
+            animation: bg-breathe 10s infinite alternate ease-in-out;
+        }
+
+        /* 👤 レイヤー2：Karen (scene1_karen.png) */
+        #karen {
+            position: absolute; bottom: 15%; left: 40%;
+            width: 300px; height: auto; z-index: 10;
+            animation: char-float 3s infinite alternate ease-in-out;
+        }
+
+        /* 👦 レイヤー3：Theo (scene1_theo.png) */
+        #theo {
+            position: absolute; bottom: 10%; left: 55%;
+            width: 220px; height: auto; z-index: 11;
+            animation: char-float 2.5s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes bg-breathe {
+            from { transform: scale(1.0); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes char-float {
+            from { transform: translateY(0) rotate(-1deg); }
+            to { transform: translateY(-15px) rotate(1deg); }
+        }
+
+        /* UI */
+        #ui { position: absolute; bottom: 40px; width: 100%; text-align: center; z-index: 100; }
+        button {
+            padding: 15px 40px; font-size: 20px; font-weight: bold;
+            background: white; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
 
-<div id="stage">
-    <!-- キャラクター -->
-    <div id="karen" class="character">
-        <div class="speech" id="k-txt"></div>
-        <div class="sprite k-work"></div>
-    </div>
-    <div id="theo" class="character">
-        <div class="speech" id="t-txt"></div>
-        <div class="sprite t-school"></div>
-    </div>
+<div id="scene-container">
+    <div id="background"></div>
+    <img src="./scene1_karen.png" id="karen" alt="Karen">
+    <img src="./scene1_theo.png" id="theo" alt="Theo">
 </div>
 
 <div id="ui">
-    <div id="scene-title">Adventure Start!</div><br>
-    <button id="next-btn">Next Scene 🎲</button>
+    <button onclick="nextScene()">Go to Next Scene</button>
 </div>
 
 <script>
-    // 背景マップ上の座標設定（%）
-    const scenes = [
-        { name: "1. School Run", x: 25, y: 30, k: "k-work", t: "t-school", ks: "Let's go, Theo!", ts: "Wait for me!" },
-        { name: "2. Office Mode", x: 45, y: 25, k: "k-work", t: null, ks: "Time to be a lawyer...", ts: "" },
-        { name: "3. English Pickup", x: 75, y: 35, k: "k-office1", t: "t-school", ks: "How was your class?", ts: "I learned a lot!" },
-        { name: "4. Café Work", x: 15, y: 55, k: "k-office2", t: null, ks: "Focus focus...☕", ts: "" },
-        { name: "5. Ramen Night", x: 40, y: 60, k: "k-office1", t: "t-school", ks: "Best ramen ever!", ts: "Slurp!" },
-        { name: "6. To Jeju!", x: 70, y: 55, k: "k-holiday", t: "t-travel", ks: "Airplane time!", ts: "Woohoo!" },
-        { name: "7. Pool Day", x: 20, y: 85, k: "k-holiday", t: "t-swim", ks: "Say cheese! 📸", ts: "Ice cream time!" },
-        { name: "8. Horseback Riding", x: 50, y: 85, k: "k-holiday", t: "t-travel", ks: "Giddy up!", ts: "So fun!" },
-        { name: "9. Happy Birthday!", x: 80, y: 80, k: "k-office2", t: "t-travel", ks: "Love you, Theo!", ts: "Happy Birthday Mama!" }
-    ];
-
-    let current = -1;
-
-    function move() {
-        current = (current + 1) % scenes.length;
-        const s = scenes[current];
-        
-        const k = document.getElementById('karen');
-        const t = document.getElementById('theo');
-        const stage = document.getElementById('stage');
-
-        // アニメーション開始
-        k.classList.add('walking');
-        t.classList.add('walking');
-        k.classList.remove('active');
-        t.classList.remove('active');
-
-        // 立ち位置
-        k.style.left = s.x + '%';
-        k.style.top = s.y + '%';
-        
-        if (s.t) {
-            t.style.display = 'block';
-            t.style.left = (s.x - 8) + '%';
-            t.style.top = (s.y + 2) + '%';
-        } else {
-            t.style.display = 'none';
-        }
-
-        // 背景カメラ追従
-        stage.style.backgroundPosition = `${100 - s.x}% ${100 - s.y}%`;
-
-        // 衣装反映
-        k.querySelector('.sprite').className = 'sprite ' + s.k;
-        if(s.t) t.querySelector('.sprite').className = 'sprite ' + s.t;
-
-        // 到着演出
-        setTimeout(() => {
-            k.classList.remove('walking');
-            t.classList.remove('walking');
-            k.classList.add('active');
-            if(s.t) t.classList.add('active');
-            document.getElementById('k-txt').innerText = s.ks;
-            document.getElementById('t-txt').innerText = s.ts;
-            document.getElementById('scene-name').innerText = s.name;
-        }, 1200);
+    function nextScene() {
+        // ここでシーン2の画像に差し替える処理を書く
+        alert("画像を保存してリポジトリに入れたら、次のシーンのプロンプトをお出しします！");
     }
-
-    document.getElementById('next-btn').addEventListener('click', move);
-    window.onload = move;
 </script>
 
 </body>
