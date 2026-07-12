@@ -2,103 +2,101 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Karen & Theo: Our Wonderfully Chaotic Days</title>
+    <title>Karen & Theo: Living Adventure</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <style>
         :root {
-            /* 1枚目：衣装デザイン画（スプライト） */
-            --char-sheet: url('https://files.oaiusercontent.com/file-m0P1iI9H5r1p2R8k8m4v5z6x'); 
-            /* 2枚目：背景マップ */
-            --bg-map: url('https://files.oaiusercontent.com/file-n7L2jT4m0R1s3Q5w9v8x6z2y'); 
+            /* ローカルファイルを参照 */
+            --char-sheet: url('./char_sheet.png'); 
+            --bg-map: url('./map_bg.png'); 
         }
 
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #222; overflow: hidden; font-family: 'serif';
+            background: #fdf6e9; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
-        /* 🌏 生きている背景（視差効果） */
+        /* 🌏 背景マップ：キャラの動きに合わせてカメラが追従 */
         #stage {
-            position: relative; width: 100vw; height: 100vh;
+            position: absolute; width: 100vw; height: 100vh;
             background-image: var(--bg-map);
-            background-size: 180% auto;
+            background-size: 250% auto; /* ズームして細部を見せる */
+            background-repeat: no-repeat;
             background-position: center;
-            transition: background-position 2s cubic-bezier(0.25, 0.1, 0.25, 1);
-            animation: breathe 10s infinite alternate ease-in-out;
+            transition: background-position 1.5s cubic-bezier(0.45, 0, 0.55, 1);
+            z-index: 1;
         }
 
-        @keyframes breathe {
-            from { transform: scale(1.0); }
-            to { transform: scale(1.05); }
-        }
-
-        /* 👤 プロ仕様のキャラクター構造 */
+        /* 👤 キャラクター本体 */
         .character {
             position: absolute;
             transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform: translate(-50%, -100%);
             z-index: 10;
-            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.2));
+            pointer-events: none;
         }
 
         .sprite {
             background-image: var(--char-sheet);
             background-repeat: no-repeat;
-            background-size: 1200px auto; /* 元画像のサイズに合わせて調整 */
-            width: 120px; height: 230px;
-            transition: background-position 0.4s steps(1);
+            background-size: 1200px auto; /* 画像の横幅を固定して座標を安定させる */
+            width: 140px; height: 260px;
+            transition: background-position 0.3s steps(1);
         }
 
-        #theo .sprite { width: 110px; height: 200px; }
+        #theo .sprite { width: 120px; height: 220px; }
 
-        /* 📍 座標切り出し設定（デザイン画から正面像を抽出） */
-        .k-work    { background-position: -20px -135px; }
-        .k-office1 { background-position: -300px -135px; }
-        .k-office2 { background-position: -580px -135px; }
-        .k-holiday { background-position: -850px -135px; }
+        /* 📍 衣装切り出し座標（デザイン画の並びに合わせて調整） */
+        .k-work    { background-position: -15px -135px; }
+        .k-office1 { background-position: -290px -135px; }
+        .k-office2 { background-position: -560px -135px; }
+        .k-holiday { background-position: -830px -135px; }
 
-        .t-school  { background-position: -20px -680px; }
-        .t-travel  { background-position: -380px -680px; }
-        .t-swim    { background-position: -720px -680px; }
+        .t-school  { background-position: -15px -680px; }
+        .t-travel  { background-position: -365px -680px; }
+        .t-swim    { background-position: -700px -680px; }
 
-        /* 🏃 高度な歩行アニメーション（Squash & Stretch） */
+        /* 🏃 わちゃわちゃ歩行アニメ */
         .walking .sprite {
-            animation: walk-bounce 0.3s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            animation: walk-bounce 0.3s infinite alternate ease-in-out;
         }
 
         @keyframes walk-bounce {
-            0% { transform: scale(1.05, 0.95) translateY(0); } /* 着地：つぶれる */
-            100% { transform: scale(0.95, 1.05) translateY(-25px); } /* 跳躍：伸びる */
+            0% { transform: scale(1.05, 0.95) translateY(0); }
+            100% { transform: scale(0.95, 1.05) translateY(-30px); }
         }
 
-        /* 💬 フローティング・ダイアログ */
+        /* 💬 吹き出し */
         .speech {
-            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            background: rgba(255,255,255,0.9); padding: 8px 20px; border-radius: 30px;
-            font-size: 14px; font-weight: bold; white-space: nowrap;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            opacity: 0; transition: 0.5s;
+            position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+            background: white; border: 3px solid #333; padding: 10px 20px; border-radius: 30px;
+            font-size: 16px; font-weight: bold; white-space: nowrap;
+            opacity: 0; transition: 0.5s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         .active .speech { opacity: 1; transform: translateX(-50%) translateY(-10px); }
 
-        /* 🎮 UI操作パネル */
+        /* 🎮 操作UI */
         #ui {
-            position: absolute; bottom: 40px; width: 100%; text-align: center; z-index: 100;
+            position: absolute; bottom: 30px; width: 100%; text-align: center; z-index: 100;
         }
         #next-btn {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            border: none; padding: 18px 60px; font-size: 22px; color: white;
+            background: #ff6b6b; border: none; padding: 20px 80px; font-size: 24px; color: white;
             font-weight: 900; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255,154,158,0.5);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: 0.3s;
+            box-shadow: 0 8px 0 #d64545; transition: 0.2s;
         }
-        #next-btn:hover { transform: scale(1.1); box-shadow: 0 15px 40px rgba(255,154,158,0.7); }
+        #next-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #d64545; }
+        
+        #scene-title {
+            color: #333; background: rgba(255,255,255,0.8); display: inline-block;
+            padding: 5px 20px; border-radius: 10px; margin-bottom: 15px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div id="stage">
+    <!-- キャラクター -->
     <div id="karen" class="character">
         <div class="speech" id="k-txt"></div>
         <div class="sprite k-work"></div>
@@ -110,23 +108,27 @@
 </div>
 
 <div id="ui">
-    <div id="scene-name" style="color: white; margin-bottom: 20px; font-size: 24px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Tap to Start Adventure</div>
-    <button id="next-btn">Next Scene</button>
+    <div id="scene-title">Adventure Start!</div><br>
+    <button id="next-btn">Next Scene 🎲</button>
 </div>
 
 <script>
+    // 背景マップ上の座標設定（%）
     const scenes = [
-        { name: "School Run", x: 30, y: 40, k: "k-work", t: "t-school", ks: "Let's go, Theo!", ts: "Wait for me!" },
-        { name: "Lawyer Mode", x: 50, y: 30, k: "k-work", t: null, ks: "Time to focus...", ts: "" },
-        { name: "Pickup Time", x: 70, y: 45, k: "k-office1", t: "t-school", ks: "How was school?", ts: "So fun!" },
-        { name: "Trip to Jeju", x: 20, y: 70, k: "k-holiday", t: "t-travel", ks: "Adventure time!", ts: "Woohoo!" },
-        { name: "Pool Day", x: 50, y: 80, k: "k-holiday", t: "t-swim", ks: "Say cheese!", ts: "Ice cream!" },
-        { name: "Happy Birthday", x: 80, y: 70, k: "k-office2", t: "t-travel", ks: "Thank you my boy!", ts: "You are the best mom!" }
+        { name: "1. School Run", x: 25, y: 30, k: "k-work", t: "t-school", ks: "Let's go, Theo!", ts: "Wait for me!" },
+        { name: "2. Office Mode", x: 45, y: 25, k: "k-work", t: null, ks: "Time to be a lawyer...", ts: "" },
+        { name: "3. English Pickup", x: 75, y: 35, k: "k-office1", t: "t-school", ks: "How was your class?", ts: "I learned a lot!" },
+        { name: "4. Café Work", x: 15, y: 55, k: "k-office2", t: null, ks: "Focus focus...☕", ts: "" },
+        { name: "5. Ramen Night", x: 40, y: 60, k: "k-office1", t: "t-school", ks: "Best ramen ever!", ts: "Slurp!" },
+        { name: "6. To Jeju!", x: 70, y: 55, k: "k-holiday", t: "t-travel", ks: "Airplane time!", ts: "Woohoo!" },
+        { name: "7. Pool Day", x: 20, y: 85, k: "k-holiday", t: "t-swim", ks: "Say cheese! 📸", ts: "Ice cream time!" },
+        { name: "8. Horseback Riding", x: 50, y: 85, k: "k-holiday", t: "t-travel", ks: "Giddy up!", ts: "So fun!" },
+        { name: "9. Happy Birthday!", x: 80, y: 80, k: "k-office2", t: "t-travel", ks: "Love you, Theo!", ts: "Happy Birthday Mama!" }
     ];
 
     let current = -1;
 
-    function next() {
+    function move() {
         current = (current + 1) % scenes.length;
         const s = scenes[current];
         
@@ -134,32 +136,32 @@
         const t = document.getElementById('theo');
         const stage = document.getElementById('stage');
 
-        // 移動アニメ開始
+        // アニメーション開始
         k.classList.add('walking');
         t.classList.add('walking');
         k.classList.remove('active');
         t.classList.remove('active');
 
-        // 座標移動
+        // 立ち位置
         k.style.left = s.x + '%';
         k.style.top = s.y + '%';
         
         if (s.t) {
             t.style.display = 'block';
-            t.style.left = (s.x - 10) + '%';
-            t.style.top = (s.y + 5) + '%';
+            t.style.left = (s.x - 8) + '%';
+            t.style.top = (s.y + 2) + '%';
         } else {
             t.style.display = 'none';
         }
 
-        // 背景視差
+        // 背景カメラ追従
         stage.style.backgroundPosition = `${100 - s.x}% ${100 - s.y}%`;
 
-        // 衣装切り替え
+        // 衣装反映
         k.querySelector('.sprite').className = 'sprite ' + s.k;
         if(s.t) t.querySelector('.sprite').className = 'sprite ' + s.t;
 
-        // セリフと到着処理
+        // 到着演出
         setTimeout(() => {
             k.classList.remove('walking');
             t.classList.remove('walking');
@@ -171,10 +173,8 @@
         }, 1200);
     }
 
-    document.getElementById('next-btn').addEventListener('click', next);
-    
-    // 初回実行
-    window.onload = next;
+    document.getElementById('next-btn').addEventListener('click', move);
+    window.onload = move;
 </script>
 
 </body>
